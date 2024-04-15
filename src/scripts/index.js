@@ -10,27 +10,22 @@ import {
   openModal,
   closeModal,
 } from '../components/modal.js';
+import { 
+  cardsContainer,
+  editButton,
+  editModal,
+  addButton,
+  addModal,
+  formProfileElement,
+  nameInput,
+  jobInput,
+  profileName,
+  profileJob,
+  cardElement,
+  placeInput,
+  linkInput
+} from '../components/constants.js'
 
-const container = document.querySelector('.content');
-const cardsContainer = container.querySelector('.places__list');
-const editButton = document.querySelector('.profile__edit-button');
-const editModal = document.querySelector('.popup_type_edit');
-const addButton = document.querySelector('.profile__add-button');
-const addModal = document.querySelector('.popup_type_new-card');
-
-export const modalImage = document.querySelector('.popup_type_image');
-export const modalImageCaption = modalImage.querySelector('.popup__caption');
-export const modalImagePic = modalImage.querySelector('.popup__image');
-
-const formElement = document.forms['edit-profile'];
-const nameInput = formElement.querySelector('.popup__input_type_name');
-const jobInput = formElement.querySelector('.popup__input_type_description');
-const profileName = document.querySelector('.profile__title');
-const profileJob = document.querySelector('.profile__description');
-
-const cardElement = document.forms['new-place'];
-const placeInput = cardElement.querySelector('.popup__input_type_card-name');
-const linkInput = cardElement.querySelector('.popup__input_type_url');
 
 initialCards.forEach((cardInfo) => {
   const cards = createCard(cardInfo, deleteCard, addLike, openImage);
@@ -38,6 +33,9 @@ initialCards.forEach((cardInfo) => {
 });
 
 editButton.addEventListener('click', () => {
+  nameInput.value = profileName.textContent;
+  jobInput.value = profileJob.textContent;
+
   openModal(editModal);
 });
 
@@ -46,9 +44,6 @@ addButton.addEventListener('click', () => {
 });
 
 // форма редактирования профиля
-
-nameInput.value = profileName.textContent;
-jobInput.value = profileJob.textContent;
 
 const handleFormSubmitProfile = (evt) => {
   evt.preventDefault();
@@ -59,7 +54,7 @@ const handleFormSubmitProfile = (evt) => {
   const openedModal = document.querySelector('.popup_is-opened');
   closeModal(openedModal);
 };
-formElement.addEventListener('submit', handleFormSubmitProfile);
+formProfileElement.addEventListener('submit', handleFormSubmitProfile);
 
 //форма добавления карточки
 
@@ -82,8 +77,7 @@ const handleFormSubmitCard = (evt) => {
 
     cardElement.reset();
 
-    const openedModal = document.querySelector('.popup_is-opened');
-    closeModal(openedModal);
+    closeModal(addModal);
   }
  cardElement.addEventListener('submit', handleFormSubmitCard);
 

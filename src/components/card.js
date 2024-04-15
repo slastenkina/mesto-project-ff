@@ -2,24 +2,23 @@ import {
   modalImage,
   modalImagePic,
   modalImageCaption,
-} from '../scripts/index.js';
+} from '../components/constants.js';
 import { openModal } from './modal.js';
+import { cardTemplate } from './constants.js';
 
 export const createCard = (cardInfo, deleteCard, addLike, openImage) => {
-  const cardTemplate = document.querySelector('#card-template').content;
-  const card = cardTemplate
-    .querySelector('.places__item')
-    .cloneNode(true);
-
-  card.querySelector('.card__image').src = cardInfo.link;
-  card.querySelector('.card__image').alt = cardInfo.name;
-  card.querySelector('.card__title').textContent = cardInfo.name;
+  const card = cardTemplate.querySelector('.places__item').cloneNode(true);
 
   const cardImage = card.querySelector('.card__image');
+
+  cardImage.src = cardInfo.link;
+  cardImage.alt = cardInfo.name;
+  cardImage.textContent = cardInfo.name;
+
   cardImage.addEventListener('click', () => openImage(cardInfo));
 
   const deleteButton = card.querySelector('.card__delete-button');
-  deleteButton.addEventListener('click', deleteCard);
+  deleteButton.addEventListener('click', () => deleteCard(card));
 
   const likeButton = card.querySelector('.card__like-button');
   likeButton.addEventListener('click', addLike);
@@ -27,9 +26,8 @@ export const createCard = (cardInfo, deleteCard, addLike, openImage) => {
   return card;
 };
 
-export const deleteCard = (evt) => {
-  const removeCard = evt.target.closest('.card');
-  removeCard.remove();
+export const deleteCard = (card) => {
+  card.remove();
 };
 
 export const addLike = (evt) => {
