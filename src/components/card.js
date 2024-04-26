@@ -6,32 +6,53 @@ import {
 import { openModal } from './modal.js';
 import { cardTemplate } from './constants.js';
 
-export const createCard = (cardInfo, deleteCard, addLike, openImage) => {
-  const card = cardTemplate.querySelector('.places__item').cloneNode(true);
-
+export const createCard = (userId, cardInfo, onDelete, onLike, onImage) => {
+  const card = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = card.querySelector('.card__image');
+  const cardTitle = card.querySelector('.card__title');
 
-  cardImage.src = cardInfo.link;
   cardImage.alt = cardInfo.name;
-  cardImage.textContent = cardInfo.name;
+  cardImage.src = cardInfo.link;
 
-  cardImage.addEventListener('click', () => openImage(cardInfo));
+  card.querySelector('.card__title').textContent = cardInfo.name;
+
+  cardImage.addEventListener('click', () => onImage(cardInfo));
 
   const deleteButton = card.querySelector('.card__delete-button');
-  deleteButton.addEventListener('click', () => deleteCard(card));
+
+  if (cardInfo.owner['_id'] === userId) {
+    deleteButton.classList.add('card__delete-button_is-active');
+    deleteButton.addEventListener('click', () => {
+      onDelete({
+        cardId: cardInfo['_id'],
+        cardElement: card,
+        buttonElement: deleteButton,
+      });
+    });
+  }
+
+  const likeNum = card.querySelector('.card__like-num');
+  likeNum.textContent = '0';
+
+  if (cardInfo.likes.length) {
+    likeNum.classList.add('card__like-num_is-active');
+    likeNum.textContent = cardInfo.likes.length;
+  }
 
   const likeButton = card.querySelector('.card__like-button');
-  likeButton.addEventListener('click', addLike);
+
+  if (cardInfo.likes.some((like) => like['_id'] === userId)) {
+    likeButton.classList.add('card__like-button_is-active');
+  };
+  likeButton.addEventListener('click', () => {
+    onLike({
+      cardId: cardInfo['_id'],
+      buttonElement: likeButton,
+      counterElement: likeNum
+    });
+});
 
   return card;
-};
-
-export const deleteCard = (card) => {
-  card.remove();
-};
-
-export const addLike = (evt) => {
-  evt.target.classList.toggle('card__like-button_is-active');
 };
 
 export const openImage = (cardInfo) => {

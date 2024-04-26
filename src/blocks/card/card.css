@@ -3,7 +3,11 @@
 @import url('./__like-button/card__like-button.css');
 @import url('./__like-button/_is-active/card__like-button_is-active.css');
 @import url('./__delete-button/card__delete-button.css');
+@import url('./__delete-button/_is-active/button_is-active.css');
 @import url('./__title/card__title.css');
+@import url('./__like-items/like-items.css');
+@import url('./__like-num/like-num.css');
+@import url('./__like-num/_is-active/like-num_is-active.css');
 
 .card {
   font-family: 'Inter', Arial, sans-serif;
