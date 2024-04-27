@@ -26,8 +26,8 @@ export const popupAvatarlink = formProfileAvatar.querySelector('.popup__input_ty
 export const avatarSubmitButton = formProfileAvatar.querySelector('.popup__button');
 
 export const formCardElement = document.forms['new-place'];
-export const placeInput = formCardElement.querySelector('.popup__input_type_card-name');
-export const linkInput = formCardElement.querySelector('.popup__input_type_url');
+export const placeInput = formCardElement.elements['place-name'];
+export const linkInput = formCardElement.elements.link;
 export const cardSubmitButton = formCardElement.querySelector('.popup__button');
 
 export const popupDelete = document.querySelector('.popup_type_delete');

@@ -9,7 +9,6 @@ import { cardTemplate } from './constants.js';
 export const createCard = (userId, cardInfo, onDelete, onLike, onImage) => {
   const card = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = card.querySelector('.card__image');
-  const cardTitle = card.querySelector('.card__title');
 
   cardImage.alt = cardInfo.name;
   cardImage.src = cardInfo.link;
@@ -43,14 +42,14 @@ export const createCard = (userId, cardInfo, onDelete, onLike, onImage) => {
 
   if (cardInfo.likes.some((like) => like['_id'] === userId)) {
     likeButton.classList.add('card__like-button_is-active');
-  };
+  }
   likeButton.addEventListener('click', () => {
     onLike({
       cardId: cardInfo['_id'],
       buttonElement: likeButton,
-      counterElement: likeNum
+      counterElement: likeNum,
     });
-});
+  });
 
   return card;
 };

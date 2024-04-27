@@ -33,11 +33,16 @@ import {
   enableValidation,
 } from '../components/validation.js';
 
-const profile = ({ name, job, avatar }) => {
-  profileName.textContent = name;
-  profileJob.textContent = job;
-  profileImage.style.backgroundImage = `url(${avatar})`;
-};
+import {
+  getUserInfo,
+  getInitialCards,
+  editProfile,
+  editAvatar,
+  createNewCard,
+  deleteCard,
+  addLike,
+  removeLike,
+} from '../components/api.js';
 
 const onLoading = ({ buttonElement, isLoading }) => {
   if (isLoading) {
@@ -68,7 +73,7 @@ profileAvatarButton.addEventListener('click', () => {
   openModal(modalProfileImage);
 });
 
-//открытие попапа добавления карточки
+// открытие попапа добавления карточки
 
 addButton.addEventListener('click', () => {
   formCardElement.reset();
@@ -79,6 +84,12 @@ addButton.addEventListener('click', () => {
 });
 
 // форма редактирования профиля
+
+const profile = ({ name, job, avatar }) => {
+  profileName.textContent = name;
+  profileJob.textContent = job;
+  profileImage.style.backgroundImage = `url(${avatar})`;
+};
 
 const handleFormSubmitProfile = (evt) => {
   evt.preventDefault();
@@ -114,7 +125,7 @@ const handleFormSubmitProfile = (evt) => {
 };
 formProfileElement.addEventListener('submit', handleFormSubmitProfile);
 
-//форма едактирования аватара
+//форма редактирования аватара
 
 const handleFormSubmitAvatar = (evt) => {
   evt.preventDefault();
@@ -162,13 +173,13 @@ const handleFormSubmitCard = (evt) => {
   })
     .then((cardData) => {
       cardsContainer.prepend(
-        createCard({
-          userId: cardData.owner['_id'],
-          cardInfo: cardData,
-          onDelete: handleDeleteCard,
-          onLike: handleLikeCard,
-          onImage: openImage,
-        })
+        createCard(
+          cardData.owner['_id'],
+          cardData,
+          handleDeleteCard,
+          handleLikeCard,
+          openImage
+        )
       );
 
       closeModal(addModal);
@@ -232,7 +243,6 @@ const handleLikeCard = ({ cardId, buttonElement, counterElement }) => {
     addLike(cardId)
       .then(({ likes }) => {
         buttonElement.classList.add('card__like-button_is-active');
-
         counterElement.classList.add('card__like-num_is-active');
         counterElement.textContent = likes.length;
       })
@@ -248,88 +258,7 @@ const handleLikeCard = ({ cardId, buttonElement, counterElement }) => {
 
 enableValidation(validationConfig);
 
-// API
-
-const config = {
-  baseUrl: 'https://nomoreparties.co/v1/wff-cohort-11',
-  headers: {
-    authorization: '62a1fb17-83a1-43a2-b4e2-e4c288cdaf66',
-    'Content-Type': 'application/json',
-  },
-};
-
-const apiResponse = (res) => {
-  if (res.ok) {
-    return res.json();
-  }
-
-  return Promise.reject(`Ошибка: ${res.status}`);
-};
-
-const getUserInfo = () => {
-  return fetch(`${config.baseUrl}/users/me`, {
-    headers: config.headers,
-  }).then(apiResponse);
-};
-
-const getInitialCards = () => {
-  return fetch(`${config.baseUrl}/cards`, {
-    headers: config.headers,
-  }).then(apiResponse);
-};
-
-const editProfile = ({ name, job }) => {
-  return fetch(`${config.baseUrl}/users/me`, {
-    method: 'PATCH',
-    headers: config.headers,
-    body: JSON.stringify({
-      name,
-      about: job,
-    }),
-  }).then(apiResponse);
-};
-
-const editAvatar = (url) => {
-  return fetch(`${config.baseUrl}/users/me/avatar`, {
-    method: 'PATCH',
-    headers: config.headers,
-    body: JSON.stringify({
-      avatar: url,
-    }),
-  }).then(apiResponse);
-};
-
-const createNewCard = ({ name, link }) => {
-  return fetch(`${config.baseUrl}/cards`, {
-    method: 'POST',
-    headers: config.headers,
-    body: JSON.stringify({
-      name: name,
-      link: link
-    }),
-  }).then(apiResponse);
-};
-
-const deleteCard = (cardId) => {
-  return fetch(`${config.baseUrl}/cards/${cardId}`, {
-    method: 'DELETE',
-    headers: config.headers,
-  }).then(apiResponse);
-};
-
-const addLike = (cardId) => {
-  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-    method: 'PUT',
-    headers: config.headers,
-  }).then(apiResponse);
-};
-
-const removeLike = (cardId) => {
-  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-    method: 'DELETE',
-    headers: config.headers,
-  }).then(apiResponse);
-};
+//API
 
 Promise.all([getUserInfo(), getInitialCards()])
   .then(([{ name, about, avatar, ['_id']: userId }, cardsData]) => {
@@ -349,8 +278,6 @@ Promise.all([getUserInfo(), getInitialCards()])
           openImage
         )
       );
-
-      
     });
   })
   .catch((error) => {
