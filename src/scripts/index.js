@@ -48,6 +48,12 @@ import {
   removeLike,
 } from '../components/api.js';
 
+const setProfileInfo = ({ name, job, avatar }) => {
+  profileName.textContent = name;
+  profileJob.textContent = job;
+  profileImage.style.backgroundImage = `url(${avatar})`;
+};
+
 const setIsLoadingButtonText = ({ buttonElement, isLoading }) => {
   if (isLoading) {
     buttonElement.textContent = 'Сохранение...';
@@ -77,37 +83,7 @@ const profileData = () => {
   openModal(editModal);
 };
 
-editButton.addEventListener('click', profileData);
-
-// открытие попапа редактирования аватара
-
-profileAvatarButton.addEventListener('click', () => {
-  formProfileAvatar.reset();
-
-  clearValidation(formProfileAvatar, validationConfig);
-
-  openModal(modalProfileImage);
-});
-
-// открытие попапа добавления карточки
-
-addButton.addEventListener('click', () => {
-  clearValidation(formCardElement, validationConfig);
-
-  openModal(addModal);
-});
-
-// закрытие попапа по клику
-
-setCloseModalByClickListeners(popupList);
-
 // форма редактирования профиля
-
-const setProfileInfo = ({ name, job, avatar }) => {
-  profileName.textContent = name;
-  profileJob.textContent = job;
-  profileImage.style.backgroundImage = `url(${avatar})`;
-};
 
 const handleFormSubmitProfile = (evt) => {
   evt.preventDefault();
@@ -140,7 +116,6 @@ const handleFormSubmitProfile = (evt) => {
       });
     });
 };
-formProfileElement.addEventListener('submit', handleFormSubmitProfile);
 
 //форма редактирования аватара
 
@@ -172,7 +147,6 @@ const handleFormSubmitAvatar = (evt) => {
       });
     });
 };
-formProfileAvatar.addEventListener('submit', handleFormSubmitAvatar);
 
 //форма добавления карточки
 
@@ -212,7 +186,6 @@ const handleFormSubmitCard = (evt) => {
       });
     });
 };
-formCardElement.addEventListener('submit', handleFormSubmitCard);
 
 //удаление карточки
 
@@ -291,6 +264,31 @@ Promise.all([getUserInfo(), getInitialCards()])
     console.error(error);
   });
 
-  
+// слушатели: 
 
+editButton.addEventListener('click', profileData);
+formProfileElement.addEventListener('submit', handleFormSubmitProfile);
+formProfileAvatar.addEventListener('submit', handleFormSubmitAvatar);
+formCardElement.addEventListener('submit', handleFormSubmitCard);
 
+// открытие попапа редактирования аватара
+
+profileAvatarButton.addEventListener('click', () => {
+  formProfileAvatar.reset();
+
+  clearValidation(formProfileAvatar, validationConfig);
+
+  openModal(modalProfileImage);
+});
+
+// открытие попапа добавления карточки
+
+addButton.addEventListener('click', () => {
+  clearValidation(formCardElement, validationConfig);
+
+  openModal(addModal);
+});
+
+// закрытие попапа по клику
+
+setCloseModalByClickListeners(popupList);
