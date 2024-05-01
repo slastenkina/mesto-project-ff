@@ -1,12 +1,12 @@
-import {
-  modalImage,
-  modalImagePic,
-  modalImageCaption,
-} from '../components/constants.js';
-import { openModal } from './modal.js';
 import { cardTemplate } from './constants.js';
 
-export const createCard = (userId, cardInfo, onDelete, onLike, onImage) => {
+export const createCard = (
+  userId,
+  cardInfo,
+  onDelete,
+  onLike,
+  onImageClick
+) => {
   const card = cardTemplate.querySelector('.card').cloneNode(true);
   const cardImage = card.querySelector('.card__image');
 
@@ -15,15 +15,15 @@ export const createCard = (userId, cardInfo, onDelete, onLike, onImage) => {
 
   card.querySelector('.card__title').textContent = cardInfo.name;
 
-  cardImage.addEventListener('click', () => onImage(cardInfo));
+  cardImage.addEventListener('click', () => onImageClick(cardInfo));
 
   const deleteButton = card.querySelector('.card__delete-button');
 
-  if (cardInfo.owner['_id'] === userId) {
+  if (cardInfo.owner._id === userId) {
     deleteButton.classList.add('card__delete-button_is-active');
     deleteButton.addEventListener('click', () => {
       onDelete({
-        cardId: cardInfo['_id'],
+        cardId: cardInfo._id,
         cardElement: card,
         buttonElement: deleteButton,
       });
@@ -31,33 +31,48 @@ export const createCard = (userId, cardInfo, onDelete, onLike, onImage) => {
   }
 
   const likeNum = card.querySelector('.card__like-num');
-  likeNum.textContent = '0';
+  
 
   if (cardInfo.likes.length) {
     likeNum.classList.add('card__like-num_is-active');
-    likeNum.textContent = cardInfo.likes.length;
   }
 
   const likeButton = card.querySelector('.card__like-button');
 
-  if (cardInfo.likes.some((like) => like['_id'] === userId)) {
+  const isLiked = cardInfo.likes.some((like) => like._id === userId);
+  if (isLiked) {
     likeButton.classList.add('card__like-button_is-active');
   }
+  likeNum.textContent = cardInfo.likes.length;
+
   likeButton.addEventListener('click', () => {
     onLike({
-      cardId: cardInfo['_id'],
+      cardId: cardInfo._id,
       buttonElement: likeButton,
       counterElement: likeNum,
+      isLiked, 
     });
   });
 
   return card;
 };
 
-export const openImage = (cardInfo) => {
-  modalImagePic.src = cardInfo.link;
-  modalImagePic.alt = cardInfo.name;
-  modalImageCaption.textContent = cardInfo.name;
-
-  openModal(modalImage);
+export const setCardLike = ({ likes, buttonElement, counterElement }) => {
+  buttonElement.classList.add('card__like-button_is-active');
+  counterElement.classList.add('card__like-num_is-active');
+  counterElement.textContent = likes.length;
 };
+
+export const removeCardLike = ({ likes, buttonElement, counterElement }) => {
+  buttonElement.classList.remove('card__like-button_is-active');
+
+  if (likes.length) {
+    counterElement.classList.add('card__like-num_is-active');
+    counterElement.textContent = likes.length;
+  } else {
+    counterElement.classList.remove('card__like-num_is-active');
+    counterElement.textContent = '0';
+  }
+};
+
+

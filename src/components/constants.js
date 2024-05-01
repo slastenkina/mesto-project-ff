@@ -1,6 +1,7 @@
 export const cardTemplate = document.querySelector('#card-template').content;
 export const container = document.querySelector('.content');
 export const cardsContainer = container.querySelector('.places__list');
+export const popupList = document.querySelectorAll('.popup');
 export const editButton = document.querySelector('.profile__edit-button');
 export const editModal = document.querySelector('.popup_type_edit');
 export const addButton = document.querySelector('.profile__add-button');

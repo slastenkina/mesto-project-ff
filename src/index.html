@@ -22,11 +22,7 @@
         <section class="profile page__section">
           <div class="profile__avatar-items">
             <button class="profile__avatar-edit"></button>
-            <img
-              class="profile__image"
-              src=""
-              alt=""
-            ></img>
+            <div class="profile__image"></div>
           </div>
 
           <div class="profile__info">
@@ -43,7 +39,7 @@
       <footer class="footer page__section">
         <p class="footer__copyright">© 2021 Mesto Russia</p>
       </footer>
-      <div class="popup popup_type_edit">
+      <div class="popup popup_is-animated popup_type_edit">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Редактировать профиль</h3>
@@ -80,12 +76,12 @@
           </form>
         </div>
       </div>
-      <div class="popup popup_type_edit_avatar">
+      <div class="popup popup_is-animated popup_type_edit_avatar">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Обновить аватар</h3>
-          <form  class="popup__form" name="edit-avatar">
-          <input
+          <form class="popup__form" name="edit-avatar">
+            <input
               type="url"
               name="link"
               class="popup__input popup__input_type_url"
@@ -94,12 +90,13 @@
               required
             />
             <span class="link-input-error popup__error"></span>
-          <button type="submit" class="button popup__button">Сохранить</button>
-        </form>
+            <button type="submit" class="button popup__button">
+              Сохранить
+            </button>
+          </form>
         </div>
       </div>
-      </div>
-      <div class="popup popup_type_new-card">
+      <div class="popup popup_is-animated popup_type_new-card">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Новое место</h3>
@@ -132,18 +129,23 @@
           </form>
         </div>
       </div>
-      <div class="popup popup_type_image">
+      <div class="popup popup_is-animated popup_type_image">
         <div class="popup__content popup__content_content_image">
           <button type="button" class="popup__close"></button>
           <img src="" alt="" class="popup__image" />
           <p class="popup__caption"></p>
         </div>
       </div>
-      <div class="popup popup_type_delete">
+      <div class="popup popup_is-animated popup_type_delete">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Вы уверены?</h3>
-          <button type="submit" class="button popup__button popup__button_confirm">Да</button>
+          <button
+            type="submit"
+            class="button popup__button popup__button_confirm"
+          >
+            Да
+          </button>
         </div>
       </div>
     </div>

@@ -122,26 +122,14 @@ const setEventListeners = ({
 
 export const enableValidation = ({
   formSelector,
-  inputSelector,
-  submitButtonSelector,
-  inactiveButtonClass,
-  inputErrorClass,
-  errorClass,
+  ...restConfig
 }) => {
   const formList = document.querySelectorAll(formSelector);
 
   formList.forEach((formElement) => {
-    formElement.addEventListener('submit', (evt) => {
-      evt.preventDefault();
-    });
-
     setEventListeners({
       formElement,
-      inputSelector,
-      submitButtonSelector,
-      inactiveButtonClass,
-      inputErrorClass,
-      errorClass,
+      ...restConfig
     });
   });
 };

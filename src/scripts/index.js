@@ -1,12 +1,16 @@
 import '../pages/index.css';
-import { createCard, openImage } from '../components/card.js';
-import { openModal, closeModal } from '../components/modal.js';
+import { createCard, setCardLike, removeCardLike } from '../components/card.js';
+import { openModal, closeModal, setCloseModalByClickListeners } from '../components/modal.js';
 import {
   cardsContainer,
+  popupList,
   editButton,
   editModal,
   addButton,
   addModal,
+  modalImage,
+  modalImagePic,
+  modalImageCaption,
   formProfileElement,
   nameInput,
   jobInput,
@@ -44,7 +48,7 @@ import {
   removeLike,
 } from '../components/api.js';
 
-const onLoading = ({ buttonElement, isLoading }) => {
+const setIsLoadingButtonText = ({ buttonElement, isLoading }) => {
   if (isLoading) {
     buttonElement.textContent = 'Сохранение...';
   } else {
@@ -52,16 +56,28 @@ const onLoading = ({ buttonElement, isLoading }) => {
   }
 };
 
+// открыте изображения по клику
+
+const openImage = (cardInfo) => {
+  modalImagePic.src = cardInfo.link;
+  modalImagePic.alt = cardInfo.name;
+  modalImageCaption.textContent = cardInfo.name;
+
+  openModal(modalImage);
+};
+
 //открытие попапа профиля
 
-editButton.addEventListener('click', () => {
+const profileData = () => {
   nameInput.value = profileName.textContent;
   jobInput.value = profileJob.textContent;
 
   clearValidation(formProfileElement, validationConfig);
 
   openModal(editModal);
-});
+};
+
+editButton.addEventListener('click', profileData);
 
 // открытие попапа редактирования аватара
 
@@ -76,16 +92,18 @@ profileAvatarButton.addEventListener('click', () => {
 // открытие попапа добавления карточки
 
 addButton.addEventListener('click', () => {
-  formCardElement.reset();
-
   clearValidation(formCardElement, validationConfig);
 
   openModal(addModal);
 });
 
+// закрытие попапа по клику
+
+setCloseModalByClickListeners(popupList);
+
 // форма редактирования профиля
 
-const profile = ({ name, job, avatar }) => {
+const setProfileInfo = ({ name, job, avatar }) => {
   profileName.textContent = name;
   profileJob.textContent = job;
   profileImage.style.backgroundImage = `url(${avatar})`;
@@ -94,7 +112,7 @@ const profile = ({ name, job, avatar }) => {
 const handleFormSubmitProfile = (evt) => {
   evt.preventDefault();
 
-  onLoading({
+  setIsLoadingButtonText({
     buttonElement: profileSubmitButton,
     isLoading: true,
   });
@@ -104,20 +122,19 @@ const handleFormSubmitProfile = (evt) => {
     job: jobInput.value,
   })
     .then(({ name, about, avatar }) => {
-      profile({
+      setProfileInfo({
         name,
         job: about,
         avatar,
       });
 
-      const openedModal = document.querySelector('.popup_is-opened');
-      closeModal(openedModal);
+      closeModal(editModal);
     })
     .catch((error) => {
       console.log(error);
     })
     .finally(() => {
-      onLoading({
+      setIsLoadingButtonText({
         buttonElement: profileSubmitButton,
         isLoading: false,
       });
@@ -130,14 +147,14 @@ formProfileElement.addEventListener('submit', handleFormSubmitProfile);
 const handleFormSubmitAvatar = (evt) => {
   evt.preventDefault();
 
-  onLoading({
+  setIsLoadingButtonText({
     buttonElement: avatarSubmitButton,
     isLoading: true,
   });
 
   editAvatar(popupAvatarlink.value)
     .then(({ name, about, avatar }) => {
-      profile({
+      setProfileInfo({
         name,
         job: about,
         avatar,
@@ -149,7 +166,7 @@ const handleFormSubmitAvatar = (evt) => {
       console.error(error);
     })
     .finally(() => {
-      onLoading({
+      setIsLoadingButtonText({
         buttonElement: avatarSubmitButton,
         isLoading: false,
       });
@@ -162,7 +179,7 @@ formProfileAvatar.addEventListener('submit', handleFormSubmitAvatar);
 const handleFormSubmitCard = (evt) => {
   evt.preventDefault();
 
-  onLoading({
+  setIsLoadingButtonText({
     buttonElement: cardSubmitButton,
     isLoading: true,
   });
@@ -174,13 +191,14 @@ const handleFormSubmitCard = (evt) => {
     .then((cardData) => {
       cardsContainer.prepend(
         createCard(
-          cardData.owner['_id'],
+          cardData.owner._id,
           cardData,
           handleDeleteCard,
           handleLikeCard,
           openImage
         )
       );
+      formCardElement.reset();
 
       closeModal(addModal);
     })
@@ -188,7 +206,7 @@ const handleFormSubmitCard = (evt) => {
       console.log(error);
     })
     .finally(() => {
-      onLoading({
+      setIsLoadingButtonText({
         buttonElement: cardSubmitButton,
         isLoading: false,
       });
@@ -198,7 +216,7 @@ formCardElement.addEventListener('submit', handleFormSubmitCard);
 
 //удаление карточки
 
-const handleDeleteCard = ({ cardId, buttonElement }) => {
+const handleDeleteCard = ({ cardId, buttonElement, cardElement }) => {
   openModal(popupDelete);
 
   popupConfirmButton.onclick = () => {
@@ -206,7 +224,7 @@ const handleDeleteCard = ({ cardId, buttonElement }) => {
 
     deleteCard(cardId)
       .then(() => {
-        buttonElement.closest('.card').remove();
+        cardElement.remove();
 
         closeModal(popupDelete);
       })
@@ -219,21 +237,13 @@ const handleDeleteCard = ({ cardId, buttonElement }) => {
 
 // лайк карточки
 
-const handleLikeCard = ({ cardId, buttonElement, counterElement }) => {
+const handleLikeCard = ({ cardId, buttonElement, counterElement, isLiked }) => {
   buttonElement.disabled = true;
 
-  if (buttonElement.classList.contains('card__like-button_is-active')) {
+  if (isLiked) {
     removeLike(cardId)
       .then(({ likes }) => {
-        buttonElement.classList.remove('card__like-button_is-active');
-
-        if (likes.length) {
-          counterElement.classList.add('card__like-num_is-active');
-          counterElement.textContent = likes.length;
-        } else {
-          counterElement.classList.remove('card__like-num_is-active');
-          counterElement.textContent = '0';
-        }
+        removeCardLike({ likes, buttonElement, counterElement });
       })
       .catch((error) => console.error(error))
       .finally(() => {
@@ -242,11 +252,8 @@ const handleLikeCard = ({ cardId, buttonElement, counterElement }) => {
   } else {
     addLike(cardId)
       .then(({ likes }) => {
-        buttonElement.classList.add('card__like-button_is-active');
-        counterElement.classList.add('card__like-num_is-active');
-        counterElement.textContent = likes.length;
+        setCardLike({ likes, buttonElement, counterElement });
       })
-
       .catch((error) => console.error(error))
       .finally(() => {
         buttonElement.disabled = false;
@@ -262,7 +269,7 @@ enableValidation(validationConfig);
 
 Promise.all([getUserInfo(), getInitialCards()])
   .then(([{ name, about, avatar, ['_id']: userId }, cardsData]) => {
-    profile({
+    setProfileInfo({
       name,
       job: about,
       avatar,
@@ -283,3 +290,7 @@ Promise.all([getUserInfo(), getInitialCards()])
   .catch((error) => {
     console.error(error);
   });
+
+  
+
+

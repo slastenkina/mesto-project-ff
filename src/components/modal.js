@@ -1,26 +1,19 @@
 export const openModal = (popup) => {
-  setTimeout(() => {
     popup.classList.add('popup_is-opened');
-  }, 100);
-  popup.classList.add('popup_is-animated');
 
   document.addEventListener('keydown', closeByEsc);
-  document.addEventListener('click', closeByClick);
 };
 
 export const closeModal = (popup) => {
-  setTimeout(() => {
-    popup.classList.remove('popup_is-animated');
-  }, 600);
   popup.classList.remove('popup_is-opened');
 
   document.removeEventListener('keydown', closeByEsc);
-  document.removeEventListener('click', closeByClick);
 };
 
 export const closeByEsc = (evt) => {
+  const openedPopup = document.querySelector('.popup_is-opened');
   if (evt.key === 'Escape') {
-    closeModal(document.querySelector('.popup_is-opened'));
+    closeModal(openedPopup);
   }
 };
 
@@ -32,4 +25,17 @@ export const closeByClick = (evt) => {
   if (evt.target.closest('.popup__close')) {
     return closeModal(evt.target.closest('.popup'));
   }
+};
+
+export const setCloseModalByClickListeners = (popupList) => {
+  popupList.forEach((popup) => {
+    // находим кнопку закрытия попапа
+    const closeButton = popup.querySelector('.popup__close');
+
+    // вешаем обработчик закрытия на кнопку
+    closeButton.addEventListener('click', closeByClick);
+
+    // вешаем обработчик закрытия на оверлей
+    popup.addEventListener('click', closeByClick);
+  });
 };
