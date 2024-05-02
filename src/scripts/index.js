@@ -1,5 +1,5 @@
 import '../pages/index.css';
-import { createCard, setCardLike, removeCardLike } from '../components/card.js';
+import { createCard, removeCard, setCardLike, removeCardLike } from '../components/card.js';
 import { openModal, closeModal, setCloseModalByClickListeners } from '../components/modal.js';
 import {
   cardsContainer,
@@ -74,7 +74,7 @@ const openImage = (cardInfo) => {
 
 //открытие попапа профиля
 
-const profileData = () => {
+const openProfilePopup = () => {
   nameInput.value = profileName.textContent;
   jobInput.value = profileJob.textContent;
 
@@ -173,6 +173,7 @@ const handleFormSubmitCard = (evt) => {
         )
       );
       formCardElement.reset();
+      clearValidation(formCardElement, validationConfig);
 
       closeModal(addModal);
     })
@@ -197,7 +198,7 @@ const handleDeleteCard = ({ cardId, buttonElement, cardElement }) => {
 
     deleteCard(cardId)
       .then(() => {
-        cardElement.remove();
+        removeCard(cardElement);
 
         closeModal(popupDelete);
       })
@@ -266,7 +267,7 @@ Promise.all([getUserInfo(), getInitialCards()])
 
 // слушатели: 
 
-editButton.addEventListener('click', profileData);
+editButton.addEventListener('click', openProfilePopup);
 formProfileElement.addEventListener('submit', handleFormSubmitProfile);
 formProfileAvatar.addEventListener('submit', handleFormSubmitAvatar);
 formCardElement.addEventListener('submit', handleFormSubmitCard);
@@ -284,8 +285,6 @@ profileAvatarButton.addEventListener('click', () => {
 // открытие попапа добавления карточки
 
 addButton.addEventListener('click', () => {
-  clearValidation(formCardElement, validationConfig);
-
   openModal(addModal);
 });
 

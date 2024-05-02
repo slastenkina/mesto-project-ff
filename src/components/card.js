@@ -50,7 +50,7 @@ export const createCard = (
       cardId: cardInfo._id,
       buttonElement: likeButton,
       counterElement: likeNum,
-      isLiked, 
+      isLiked: likeButton.classList.contains('card__like-button_is-active'),  //спасибо большое! я понимала в чём проблема, но никак не могла найти решение, чтобы именно лайк определялся
     });
   });
 
@@ -75,4 +75,6 @@ export const removeCardLike = ({ likes, buttonElement, counterElement }) => {
   }
 };
 
-
+export const removeCard = (cardElement) => {
+  cardElement.remove();
+};

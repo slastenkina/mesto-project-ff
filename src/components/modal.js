@@ -10,20 +10,16 @@ export const closeModal = (popup) => {
   document.removeEventListener('keydown', closeByEsc);
 };
 
-export const closeByEsc = (evt) => {
+const closeByEsc = (evt) => {
   const openedPopup = document.querySelector('.popup_is-opened');
   if (evt.key === 'Escape') {
     closeModal(openedPopup);
   }
 };
 
-export const closeByClick = (evt) => {
+const handleCloseModalByOverlayClick = (evt) => {
   if (evt.target.classList.contains('popup_is-opened')) {
     return closeModal(evt.target);
-  }
-
-  if (evt.target.closest('.popup__close')) {
-    return closeModal(evt.target.closest('.popup'));
   }
 };
 
@@ -33,9 +29,9 @@ export const setCloseModalByClickListeners = (popupList) => {
     const closeButton = popup.querySelector('.popup__close');
 
     // вешаем обработчик закрытия на кнопку
-    closeButton.addEventListener('click', closeByClick);
+    closeButton.addEventListener('click', () => closeModal(popup));;
 
     // вешаем обработчик закрытия на оверлей
-    popup.addEventListener('click', closeByClick);
+    popup.addEventListener('click', handleCloseModalByOverlayClick);
   });
 };
